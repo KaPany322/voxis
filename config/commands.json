@@ -1,0 +1,25 @@
+{
+  "commands": [
+    {
+      "name": "Open Firefox",
+      "triggers": ["open firefox", "start firefox", "launch firefox"],
+      "actions": [
+        {
+          "type": "application",
+          "parameters": {"name": "firefox"}
+        }
+      ],
+      "response": "Opening Firefox."
+    },
+    {
+      "name": "Take a break",
+      "triggers": ["take a break"],
+      "actions": [
+        {"type": "notification", "parameters": {"message": "Break time!"}},
+        {"type": "delay", "parameters": {"seconds": 1}},
+        {"type": "notification", "parameters": {"message": "Welcome back."}}
+      ],
+      "response": "Break reminder complete."
+    }
+  ]
+}
