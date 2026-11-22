@@ -1,6 +1,6 @@
 # Voxis
 
-Voxis is an open-source, modular command engine for a future voice assistant. Phase 1 accepts typed text, resolves exact trigger phrases and runs configured actions. It does not include speech recognition, wake-word detection, AI, a GUI or external plugins.
+Voxis is an open-source, modular command engine. It accepts typed commands or offline microphone input, resolves exact trigger phrases and runs configured actions. It does not include wake-word detection, AI, a GUI or external plugins.
 
 ## Architecture
 
@@ -18,7 +18,14 @@ Requires Python 3.12 or newer.
 ```sh
 python -m venv .venv
 # Activate the virtual environment, then:
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,voice]"
+```
+
+On WSL, install eSpeak NG and the ALSA playback utility used by `pyttsx3`:
+
+```sh
+sudo apt update
+sudo apt install espeak-ng alsa-utils libportaudio2 unzip
 ```
 
 ## Run
@@ -29,7 +36,29 @@ From the project root:
 voxis
 # or choose another configuration:
 voxis --config path/to/commands.json
+# listen to the microphone using offline speech recognition:
+voxis --voice
 ```
+
+Voice mode needs a Vosk model downloaded once. The small US English model is about 40 MB:
+
+```sh
+mkdir -p models
+wget -O /tmp/vosk-model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+unzip /tmp/vosk-model.zip -d models
+voxis --voice
+```
+
+To choose a microphone, list the devices and pass its input device ID or name:
+
+```sh
+python -m sounddevice
+voxis --voice --device 2
+# or select by name:
+voxis --voice --device "USB Microphone"
+```
+
+Recognition then runs locally. Use a model for your spoken language if it is not English; see the [Vosk models page](https://alphacephei.com/vosk/models). In WSL, enable Windows microphone access and make sure the microphone is visible to Linux.
 
 Type `exit` or `quit` to leave. You can also run `python -m voxis.main` after installing the package.
 

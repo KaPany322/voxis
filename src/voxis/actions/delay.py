@@ -11,7 +11,7 @@ class DelayAction:
 
     def __call__(self, action: ActionConfig) -> ActionResult:
         seconds = action.parameters.get("seconds")
-        if isinstance(seconds, bool) or not isinstance(seconds, (int, float)) or seconds < 0:
+        if not isinstance(seconds, (int, float)) or seconds < 0:
             return ActionResult(False, "Delay action requires non-negative numeric 'seconds'.")
         time.sleep(seconds)
         return ActionResult(True, f"Waited {seconds:g} seconds.")

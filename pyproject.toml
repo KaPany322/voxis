@@ -12,7 +12,7 @@ dependencies = ["pydantic>=2.6,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
-
+voice = ["pyttsx3>=2.99", "vosk>=0.3.45", "sounddevice>=0.5"]
 [project.scripts]
 voxis = "voxis.main:main"
 

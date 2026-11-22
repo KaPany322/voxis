@@ -1,13 +1,18 @@
 {
   "commands": [
     {
+      "name": "Hey Voxis",
+      "triggers": ["hey voxis"],
+      "actions": [
+        {"type": "notification", "parameters": {"message": "Hey there."}}
+      ],
+      "response": "Hey there."
+    },
+    {
       "name": "Open Firefox",
       "triggers": ["open firefox", "start firefox", "launch firefox"],
       "actions": [
-        {
-          "type": "application",
-          "parameters": {"name": "firefox"}
-        }
+        {"type": "application","parameters": {"name": "firefox"}}
       ],
       "response": "Opening Firefox."
     },
@@ -20,6 +25,22 @@
         {"type": "notification", "parameters": {"message": "Welcome back."}}
       ],
       "response": "Break reminder complete."
+    },
+    {
+      "name": "Launch Dota 2",
+      "triggers": ["fuck niggers", "start dota 2"],
+      "actions": [
+        {"type": "application", "parameters": {"name": "dota2"}}
+      ],
+      "response": "Launching Dota 2."
+    },
+    {
+      "name": "Open Dota 2 Steam page",
+      "triggers": ["suck my balls", "open dota 2 steam page"],
+      "actions": [
+        {"type": "application", "parameters": {"name": "dota2page"}}
+      ],
+      "response": "Opening gachimuchi page."
     }
   ]
 }

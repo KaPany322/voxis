@@ -3,28 +3,55 @@
 import argparse
 from pathlib import Path
 
-from voxis.actions import create_default_registry
 from voxis.config.commands import load_command_config
 from voxis.core.action_engine import ActionEngine
-from voxis.core.command_resolver import CommandResolver
+from voxis.core.registry import ActionRegistry
+from voxis.core.voice_input import listen
+import pyttsx3
+
+tts = pyttsx3.init()
 
 
-def run(config_path: str | Path) -> None:
+def speak(text: str) -> None:
+    """Speak text and wait for playback to finish before continuing."""
+    tts.say(text)
+    tts.runAndWait()
+
+
+def run(
+    config_path: str | Path,
+    voice: bool = False,
+    model_path: str | Path = "models/vosk-model-small-en-us-0.15",
+    device: int | str | None = None,
+) -> None:
     """Run the interactive CLI using the supplied JSON configuration."""
     config = load_command_config(config_path)
-    resolver = CommandResolver(config)
-    engine = ActionEngine(create_default_registry())
-    print("Voxis: Ready. Type 'exit' or 'quit' to leave.")
+    registry = ActionRegistry(config)
+    engine = ActionEngine(registry)
+    voice_input = listen(model_path, device=device) if voice else None
+    ready_message = (
+        "Ready. Say a command or say exit."
+        if voice
+        else "Ready. Type 'exit' or 'quit' to leave."
+    )
+    print(f"Voxis: {ready_message}")
+    speak(ready_message)
     while True:
         try:
-            user_text = input("You: ")
+            if voice_input is None:
+                user_text = input("You: ")
+            else:
+                user_text = next(voice_input)
+                print(f"You: {user_text}")
         except (EOFError, KeyboardInterrupt):
             print("\nVoxis: Goodbye.")
+            speak("Goodbye.")
             break
         if user_text.strip().lower() in {"exit", "quit"}:
             print("Voxis: Goodbye.")
+            speak("Goodbye")
             break
-        command = resolver.resolve(user_text)
+        command = registry.resolve(user_text)
         if command is None:
             print("Voxis: I don't recognize that command.")
             continue
@@ -32,6 +59,7 @@ def run(config_path: str | Path) -> None:
         if result.success:
             if command.response:
                 print(f"Voxis: {command.response}")
+                speak(f"{command.response}")
             else:
                 print("Voxis: Done.")
         else:
@@ -54,9 +82,26 @@ def main() -> None:
         default="config/commands.json",
         help="Path to the JSON command configuration.",
     )
+    parser.add_argument(
+        "--voice",
+        action="store_true",
+        help="Recognize microphone input offline using the local Vosk model.",
+    )
+    parser.add_argument(
+        "--model",
+        default="models/vosk-model-small-en-us-0.15",
+        help="Path to the downloaded Vosk model (used with --voice).",
+    )
+    parser.add_argument(
+        "--device",
+        help="Microphone device ID or name (list devices with 'python -m sounddevice').",
+    )
     args = parser.parse_args()
+    device = args.device
+    if device is not None and device.isdecimal():
+        device = int(device)
     try:
-        run(args.config)
+        run(args.config, voice=args.voice, model_path=args.model, device=device)
     except Exception as exc:
         parser.exit(1, f"Voxis: Could not start: {exc}\n")
 

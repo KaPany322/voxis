@@ -61,13 +61,13 @@ class CommandConfig(BaseModel):
         seen: dict[str, str] = {}
         for command in self.commands:
             for trigger in command.triggers:
-                normalized = trigger.strip().lower()
-                if normalized in seen:
+                normalized_trigger = trigger.strip().lower()
+                if normalized_trigger in seen:
                     raise ValueError(
                         f"Trigger '{trigger}' is duplicated in commands "
-                        f"'{seen[normalized]}' and '{command.name}'."
+                        f"'{seen[normalized_trigger]}' and '{command.name}'."
                     )
-                seen[normalized] = command.name
+                seen[normalized_trigger] = command.name
         return self
 
 
