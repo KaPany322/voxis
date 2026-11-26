@@ -4,7 +4,7 @@ import subprocess
 from typing import Sequence
 
 from voxis.config.commands import ActionConfig
-from voxis.core.registry import ActionResult
+from voxis.actions.actions import ActionResult
 
 
 class ApplicationAction:

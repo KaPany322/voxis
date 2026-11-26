@@ -36,7 +36,7 @@ From the project root:
 voxis
 # or choose another configuration:
 voxis --config path/to/commands.json
-# listen to the microphone using offline speech recognition:
+# listen for "Hey Voxis", then recognize one command offline:
 voxis --voice
 ```
 
@@ -58,7 +58,7 @@ voxis --voice --device 2
 voxis --voice --device "USB Microphone"
 ```
 
-Recognition then runs locally. Use a model for your spoken language if it is not English; see the [Vosk models page](https://alphacephei.com/vosk/models). In WSL, enable Windows microphone access and make sure the microphone is visible to Linux.
+Recognition then runs locally. Say “Hey Voxis” followed by a command, such as “Hey Voxis, open Firefox.” Voxis handles one command, then waits for the wake phrase again. Use a model for your spoken language if it is not English; see the [Vosk models page](https://alphacephei.com/vosk/models). In WSL, enable Windows microphone access and make sure the microphone is visible to Linux.
 
 Type `exit` or `quit` to leave. You can also run `python -m voxis.main` after installing the package.
 

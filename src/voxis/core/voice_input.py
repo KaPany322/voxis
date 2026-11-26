@@ -6,8 +6,8 @@ from collections.abc import Iterator
 from pathlib import Path
 
 
-def listen(model_path: str | Path, device: int | str | None = None) -> Iterator[str]:
-    """Yield recognized phrases from the default microphone"""
+def listen(model_path: str | Path, wake_phrase: str, device: int | str | None = None) -> Iterator[str]:
+    """Yield one command after each offline "Hey Voxis" wake phrase."""
     import sounddevice as sd
     from vosk import KaldiRecognizer, Model
 
@@ -34,4 +34,8 @@ def listen(model_path: str | Path, device: int | str | None = None) -> Iterator[
                 audio = audio_queue.get()
                 if recognizer.AcceptWaveform(audio):
                     phrase = json.loads(recognizer.Result()).get("text", "")
-        yield phrase
+                    print(f"{phrase} first")
+
+        if wake_phrase in phrase.split()[0]:
+            print(f"{phrase} second")
+            yield " ".join(phrase.split()[1:])

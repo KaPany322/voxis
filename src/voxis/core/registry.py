@@ -3,30 +3,19 @@
 from typing import Protocol
 from collections.abc import Sequence
 
-from voxis.config.commands import ActionConfig, Command, CommandConfig
+from voxis.config.commands import Command, CommandConfig
+
+from voxis.actions.actions import ActionHandler
+
+from voxis.actions.application import ApplicationAction
+from voxis.actions.delay import DelayAction
+from voxis.actions.notification import NotificationAction
 
 
-class ActionHandler(Protocol):
-    """Callable interface implemented by action handlers."""
-
-    def __call__(self, action: ActionConfig) -> "ActionResult": ...
-
-
-class ActionResult:
-    """Structured outcome of running one action."""
-
-    def __init__(self, success: bool, message: str | None = None) -> None:
-        self.success = success
-        self.message = message
-
-
-class ActionRegistry:
+class Registry:
     """Map action type names to callable handlers."""
 
     def __init__(self, config: CommandConfig) -> None:
-        from voxis.actions.application import ApplicationAction
-        from voxis.actions.delay import DelayAction
-        from voxis.actions.notification import NotificationAction
 
         self._commands = config.commands
         self._handlers: dict[str, ActionHandler] = {

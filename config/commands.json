@@ -2,11 +2,11 @@
   "commands": [
     {
       "name": "Hey Voxis",
-      "triggers": ["hey voxis"],
+      "triggers": ["hey"],
       "actions": [
         {"type": "notification", "parameters": {"message": "Hey there."}}
       ],
-      "response": "Hey there."
+      "response": "Hi there"
     },
     {
       "name": "Open Firefox",

@@ -5,12 +5,11 @@ from pathlib import Path
 
 from voxis.config.commands import load_command_config
 from voxis.core.action_engine import ActionEngine
-from voxis.core.registry import ActionRegistry
+from voxis.core.registry import Registry
 from voxis.core.voice_input import listen
 import pyttsx3
 
 tts = pyttsx3.init()
-
 
 def speak(text: str) -> None:
     """Speak text and wait for playback to finish before continuing."""
@@ -23,14 +22,15 @@ def run(
     voice: bool = False,
     model_path: str | Path = "models/vosk-model-small-en-us-0.15",
     device: int | str | None = None,
+    wake_phrase: str = "but"
 ) -> None:
     """Run the interactive CLI using the supplied JSON configuration."""
     config = load_command_config(config_path)
-    registry = ActionRegistry(config)
+    registry = Registry(config)
     engine = ActionEngine(registry)
-    voice_input = listen(model_path, device=device) if voice else None
+    voice_input = listen(model_path, device=device, wake_phrase=wake_phrase) if voice else None
     ready_message = (
-        "Ready. Say a command or say exit."
+        "Ready. Say Hey Voxis, then a command."
         if voice
         else "Ready. Type 'exit' or 'quit' to leave."
     )
@@ -39,19 +39,19 @@ def run(
     while True:
         try:
             if voice_input is None:
-                user_text = input("You: ")
+                user_input = input("You: ")
             else:
-                user_text = next(voice_input)
-                print(f"You: {user_text}")
+                user_input = next(voice_input)
+                print(f"You: {user_input}")
         except (EOFError, KeyboardInterrupt):
             print("\nVoxis: Goodbye.")
             speak("Goodbye.")
             break
-        if user_text.strip().lower() in {"exit", "quit"}:
+        if user_input.strip().lower() in {"exit", "quit"}:
             print("Voxis: Goodbye.")
             speak("Goodbye")
             break
-        command = registry.resolve(user_text)
+        command = registry.resolve(user_input)
         if command is None:
             print("Voxis: I don't recognize that command.")
             continue

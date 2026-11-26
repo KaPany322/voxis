@@ -3,7 +3,8 @@
 from dataclasses import dataclass
 
 from voxis.config.commands import Command
-from voxis.core.registry import ActionRegistry, ActionResult
+from voxis.core.registry import Registry
+from voxis.actions.actions import ActionResult
 
 
 @dataclass(frozen=True)
@@ -19,7 +20,7 @@ class ExecutionResult:
 class ActionEngine:
     """Execute each command action in order, stopping at the first failure."""
 
-    def __init__(self, registry: ActionRegistry) -> None:
+    def __init__(self, registry: Registry) -> None:
         self._registry = registry
 
     def execute(self, command: Command) -> ExecutionResult:
